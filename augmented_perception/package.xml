@@ -71,6 +71,31 @@
   <build_depend>rosbag</build_depend>
   <build_export_depend>rosbag</build_export_depend>
 
+  <build_depend>colormap</build_depend>
+  <build_export_depend>colormap</build_export_depend>
+
+  <build_depend>cv_bridge</build_depend>
+  <build_export_depend>cv_bridge</build_export_depend>
+
+  <build_depend>laser_geometry</build_depend>
+  <build_export_depend>laser_geometry</build_export_depend>
+
+  <build_depend>lidar_segmentation</build_depend>
+  <build_export_depend>lidar_segmentation</build_export_depend>
+
+  <build_depend>message_generation</build_depend>
+  <exec_depend>message_runtime</exec_depend>
+
+  <build_depend>pcl_ros</build_depend>
+  <build_export_depend>pcl_ros</build_export_depend>
+
+  <build_depend>velodyne_pointcloud</build_depend>
+  <build_export_depend>velodyne_pointcloud</build_export_depend>
+
+  <build_depend>mtt</build_depend>
+  <build_export_depend>mtt</build_export_depend>
+
+
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

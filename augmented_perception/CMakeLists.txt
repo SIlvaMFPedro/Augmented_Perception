@@ -15,6 +15,14 @@ find_package(catkin REQUIRED COMPONENTS
         tf
         visualization_msgs
         rosbag
+        colormap
+        cv_bridge
+        laser_geometry
+        lidar_segmentation
+        message_generation
+        pcl_ros
+        velodyne_pointcloud
+        mtt
 )
 
 ## System dependencies are found with CMake's conventions
@@ -72,10 +80,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
+generate_messages(
+   DEPENDENCIES
+   std_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -107,9 +115,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  INCLUDE_DIRS include
 #  LIBRARIES augmented_perception
-  CATKIN_DEPENDS roscpp rospy std_msgs
+  CATKIN_DEPENDS roscpp rospy std_msgs colormap laser_geometry lidar_segmentation message_runtime pcl_ros tf velodyne_pointcloud
 #  DEPENDS system_lib
 )
 
@@ -120,14 +128,24 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
+
+include_directories(${OpenCV_INCLUDE_DIRS}
+        ${PCL_LIBRARY_DIRS}
+        )
+
+add_definitions(${PCL_DEFINITIONS})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/augmented_perception.cpp
 # )
+add_library(${PROJECT_NAME}
+        src/common.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -137,7 +155,13 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_node src/rosbag_player_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/rosbag_player_node.cpp)
+add_executable(ball_detection_node src/ball_detection_node.cpp)
+add_executable(labelling_node src/labelling_node.cpp)
+add_executable(dataset_playback_node src/dataset_playback_node.cpp)
+add_executable(rosbag_player_node src/rosbag_player_node.cpp)
+add_executable(experiment src/experiment.cpp)
+add_executable(chessboard src/chessboard.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -147,11 +171,53 @@ add_executable(${PROJECT_NAME}_node src/rosbag_player_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(ball_detection_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(labelling_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} mtt_generate_messages_cpp)
+add_dependencies(dataset_playback_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(rosbag_player_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(experiment ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(chessboard ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(${PROJECT_NAME}_node
-  ${catkin_LIBRARIES}
+# target_link_libraries(${PROJECT_NAME}_node
+#   ${catkin_LIBRARIES}
+# )
+target_link_libraries(
+        ball_detection_node
+        ${catkin_LIBRARIES}
+        # ${PCL_LIBRARIES}
+        ${OpenCV_LIBS}
+)
+target_link_libraries(
+        labelling_node
+        ${catkin_LIBRARIES}
+        ${PCL_LIBRARIES}
+        ${OpenCV_LIBS}
+)
+target_link_libraries(
+        dataset_playback_node
+        ${catkin_LIBRARIES}
+        # ${PCL_LIBRARIES}
+        ${OpenCV_LIBS}
+)
+target_link_libraries(
+        rosbag_player_node
+        ${catkin_LIBRARIES}
+        # ${PCL_LIBRARIES}
+        ${OpenCV_LIBS}
+)
+target_link_libraries(
+        experiment
+        ${catkin_LIBRARIES}
+        # ${PCL_LIBRARIES}
+        ${OpenCV_LIBS}
+)
+target_link_libraries(
+        chessboard
+        ${catkin_LIBRARIES}
+        # ${PCL_LIBRARIES}
+        ${OpenCV_LIBS}
 )
 
 #############
