@@ -11,7 +11,6 @@ find_package(catkin REQUIRED COMPONENTS
         roscpp
         rospy
         std_msgs
-        rws2019_msgs
         tf
         visualization_msgs
         rosbag
@@ -115,7 +114,7 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
+#  INCLUDE_DIRS include
 #  LIBRARIES augmented_perception
   CATKIN_DEPENDS roscpp rospy std_msgs colormap laser_geometry lidar_segmentation message_runtime pcl_ros tf velodyne_pointcloud
 #  DEPENDS system_lib
