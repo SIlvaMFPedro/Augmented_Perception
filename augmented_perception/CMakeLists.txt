@@ -15,7 +15,7 @@ endif()
 option(UseQt5 "Build w/ QT version 5" ${DEFAULT_BUILD_QT5})
 
 if (UseQt5)
-    find_package(Qt5 COMPONENTS Core Gui Network Widgets Concurrent REQUIRED)
+    find_package(Qt5 COMPONENTS Core Gui Network Widgets Concurrent REQUIRED EXACT 5.9.5)
     message("qt5 is used")
     # Find Qt5Core and Qt5Widgets
     find_package(Qt5Core REQUIRED)
