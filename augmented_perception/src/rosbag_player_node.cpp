@@ -12,7 +12,7 @@
 #include <rosbag/message_instance.h>
 #include <rosbag/view.h>
 #include <rosgraph_msgs/Clock.h>
-#include <rws2019_msgs/MakeAPlay.h>
+//#include <rws2019_msgs/MakeAPlay.h>
 #include <tf/transform_listener.h>
 #include <tf/transform_broadcaster.h>
 #include <visualization_msgs/Marker.h>

@@ -4,6 +4,33 @@ project(augmented_perception)
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 
+set(DISTRO $ENV{ROS_DISTRO})
+message("Distribution: " ${DISTRO})
+
+set(DEFAULT_BUILD_QT5 OFF)
+if(${DISTRO} STREQUAL "melodic")
+    set(DEFAULT_BUILD_QT5 ON)
+endif()
+
+option(UseQt5 "Build w/ QT version 5" ${DEFAULT_BUILD_QT5})
+
+if (UseQt5)
+    find_package(Qt5 COMPONENTS Core Gui Network Widgets Concurrent REQUIRED)
+    message("qt5 is used")
+    # Find Qt5Core and Qt5Widgets
+    find_package(Qt5Core REQUIRED)
+    find_package(Qt5Widgets REQUIRED)
+    # For finding Qt includes
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+    include_directories(${Qt5Widgets_INCLUDE_DIRS})
+    include_directories(${Qt5Core_INCLUDE_DIRS})
+
+else()
+    find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork QtWidgets REQUIRED)
+    include(${QT_USE_FILE})
+    message("qt4 is used")
+endif()
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
@@ -26,6 +53,12 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+find_package(OpenCV REQUIRED EXACT 3.2)
+find_package(PCL 1.8 REQUIRED)
+find_package(PkgConfig REQUIRED)
+find_package(Qt5 5.7.0 REQUIRED COMPONENTS
+        Core)
+set(CMAKE_AUTOMOC ON)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -82,6 +115,7 @@ find_package(catkin REQUIRED COMPONENTS
 generate_messages(
    DEPENDENCIES
    std_msgs
+   mtt
 )
 
 ################################################
@@ -116,7 +150,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES augmented_perception
-  CATKIN_DEPENDS roscpp rospy std_msgs colormap laser_geometry lidar_segmentation message_runtime pcl_ros tf velodyne_pointcloud
+  CATKIN_DEPENDS roscpp rospy std_msgs mtt colormap laser_geometry lidar_segmentation message_runtime pcl_ros tf velodyne_pointcloud
 #  DEPENDS system_lib
 )
 
@@ -130,11 +164,10 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+  ${Qt5_INCLUDE_DIRS}
 )
 
-include_directories(${OpenCV_INCLUDE_DIRS}
-        ${PCL_LIBRARY_DIRS}
-        )
 
 add_definitions(${PCL_DEFINITIONS})
 
@@ -160,7 +193,7 @@ add_executable(labelling_node src/labelling_node.cpp)
 add_executable(dataset_playback_node src/dataset_playback_node.cpp)
 add_executable(rosbag_player_node src/rosbag_player_node.cpp)
 add_executable(experiment src/experiment.cpp)
-add_executable(chessboard src/chessboard.cpp)
+#add_executable(chessboard src/chessboard.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -176,7 +209,7 @@ add_dependencies(labelling_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXP
 add_dependencies(dataset_playback_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(rosbag_player_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(experiment ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(chessboard ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(chessboard ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(${PROJECT_NAME}_node
@@ -212,11 +245,14 @@ target_link_libraries(
         # ${PCL_LIBRARIES}
         ${OpenCV_LIBS}
 )
-target_link_libraries(
-        chessboard
-        ${catkin_LIBRARIES}
-        # ${PCL_LIBRARIES}
-        ${OpenCV_LIBS}
+#target_link_libraries(
+#        chessboard
+#        ${catkin_LIBRARIES}
+#        # ${PCL_LIBRARIES}
+#        ${OpenCV_LIBS}
+#)
+target_link_libraries(${PROJECT_NAME}
+        Qt5::Gui
 )
 
 #############
