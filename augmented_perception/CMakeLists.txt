@@ -56,7 +56,7 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(OpenCV REQUIRED EXACT 3.2)
 find_package(PCL 1.8 REQUIRED)
 find_package(PkgConfig REQUIRED)
-find_package(Qt5 5.7.0 REQUIRED COMPONENTS
+find_package(Qt5 5.9.5 REQUIRED COMPONENTS
         Core)
 set(CMAKE_AUTOMOC ON)
 
